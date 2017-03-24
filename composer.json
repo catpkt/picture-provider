@@ -1,0 +1,21 @@
+{
+    "name": "catpkt/picture-provider",
+    "description": "Store pictures and provider uris for third part.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Fenz",
+            "email": "uukoo@163.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "symfony/http-fondation": "~3.2",
+        "fenzland/http": "^0.1.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "CatPKT\\PictureProvider\\": "libs/"
+        }
+    }
+}
