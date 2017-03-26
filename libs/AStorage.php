@@ -63,11 +63,11 @@ abstract class AStorage
 	 *
 	 * @access public
 	 *
-	 * @param  string $path
+	 * @param  string $hash
 	 *
 	 * @return IPicture
 	 */
-	abstract public function get( string$path ):IPicture;
+	abstract public function get( string$hash ):IPicture;
 
 	/**
 	 * Method store
