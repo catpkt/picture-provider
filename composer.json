@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=7.0.0",
-        "symfony/http-fondation": "~3.2",
+        "symfony/http-foundation": "~3.2",
         "fenzland/http": "^0.1.3"
     },
     "autoload": {
