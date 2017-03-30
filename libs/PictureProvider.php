@@ -2,7 +2,7 @@
 
 namespace CatPKT\PictureProvider;
 
-use Symfony\Component\HttpFoundation\{  Request,  Response  };
+use Symfony\Component\HttpFoundation\{  Request,  Response, JsonResponse  };
 
 ////////////////////////////////////////////////////////////////
 
@@ -41,7 +41,7 @@ class PictureProvider
 	 */
 	public function handle( Request$request ):Response
 	{
-		return $this->{$this->route( $request )}( $request );
+		return new JsonResponse( $this->{$this->route( $request )}( $request ) );
 	}
 
 	/**
@@ -80,9 +80,9 @@ class PictureProvider
 	 *
 	 * @param  Request $request
 	 *
-	 * @return array
+	 * @return string
 	 */
-	protected function upload( Request$request ):array
+	protected function upload( Request$request ):string
 	{
 		$content=     $this->storage->app()->getEncryptor()->decrypt( $request->getContent() );
 		$contentType= $request->headers->get( 'Content-Type' );
@@ -126,6 +126,9 @@ class PictureProvider
 		$picture= $this->storage->get( $hash );
 
 		return array_map( function( $size )use( $picture ){
+
+			list( $width, $height, )= $this->parseSize( $size );
+
 			return $picture->getUrlBySize( $size );
 		}, $request->get( 'sizes' ) );
 	}
@@ -151,9 +154,9 @@ class PictureProvider
 	 *
 	 * @param  Request $request
 	 *
-	 * @return array
+	 * @return bool
 	 */
-	protected function delete( Request$request ):array
+	protected function delete( Request$request ):bool
 	{
 		return $this->storage->delete( $request->get( 'path' ) );
 	}
@@ -165,9 +168,9 @@ class PictureProvider
 	 *
 	 * @param  Request $request
 	 *
-	 * @return array
+	 * @return bool
 	 */
-	protected function copy( Request$request ):array
+	protected function copy( Request$request ):bool
 	{
 		return $this->storage->copy( $request->get( 'path' ), $request->get( 'dir' ) );
 	}
@@ -179,11 +182,30 @@ class PictureProvider
 	 *
 	 * @param  Request $request
 	 *
-	 * @return array
+	 * @return bool
 	 */
-	protected function move( Request$request ):array
+	protected function move( Request$request ):bool
 	{
 		return $this->storage->move( $request->get( 'path' ), $request->get( 'dir' ) );
+	}
+
+	/**
+	 * Method parseSize
+	 *
+	 * @access private
+	 *
+	 * @param  string $size
+	 *
+	 * @return array
+	 */
+	private function parseSize( string$size ):array
+	{
+		if(!( preg_match( '/\\d+x\\d+/i', $size ) ))
+		{
+			abort( 400, 'Invalid size format.' );
+		}
+
+		return explode( 'x', strtolower( $size ) );
 	}
 
 }
