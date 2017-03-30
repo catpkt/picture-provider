@@ -8,15 +8,6 @@ class Encryptor
 {
 
 	/**
-	 * Var apUri
-	 *
-	 * @access protected
-	 *
-	 * @var    string
-	 */
-	protected $apUri;
-
-	/**
 	 * Var apiKey
 	 *
 	 * @access protected
@@ -43,9 +34,8 @@ class Encryptor
 	 * @param  string $apiKey
 	 * @param  string $encryptMethod
 	 */
-	public function __construct( string$apiUri, string$apiKey, string$encryptMethod='AES-256-CBC' )
+	public function __construct( string$apiKey, string$encryptMethod='AES-256-CBC' )
 	{
-		$this->apiUri= substr( $apiUri, -1 )==='/'? $apiUri : "$apiUri/";
 		$this->apiKey= $apiKey;
 		$this->encryptMethod= $encryptMethod;
 	}
@@ -67,7 +57,7 @@ class Encryptor
 
 		if( $value===false )
 		{
-			throw new Exception('Could not encrypt the data.');
+			throw new \Exception('Could not encrypt the data.');
 		}
 
 		$iv= base64_encode($iv);
@@ -82,11 +72,11 @@ class Encryptor
 	 *
 	 * @access public
 	 *
-	 * @param  strnig $payload
+	 * @param  string $payload
 	 *
 	 * @return mixed
 	 */
-	public function decrypt( strnig$payload )
+	public function decrypt( string$payload )
 	{
 		try{
 			$payload= json_decode( base64_decode( $payload ) );
@@ -99,14 +89,14 @@ class Encryptor
 
 			if( false===$decrypted )
 			{
-				throw new Exception();
+				throw new \Exception();
 			}
 
 			return unserialize( $decrypted );
 		}
 		catch( Throwable$e )
 		{
-			throw new Exception('Could not decrypt the data');
+			throw new \Exception('Could not decrypt the data');
 		}
 	}
 
@@ -115,22 +105,22 @@ class Encryptor
 	 *
 	 * @access private
 	 *
-	 * @param  array $payload
+	 * @param  \stdClass $payload
 	 *
 	 * @return void
 	 */
-	private function validMac( array$payload ):void
+	private function validMac( \stdClass$payload )
 	{
 		$bytes= random_bytes(16);
 
 		if(!(
 			hash_equals(
-				hash_hmac( 'sha256', $payload['mac'], $bytes, true )
+				hash_hmac( 'sha256', $payload->mac, $bytes, true )
 				,
-				hash_hmac( 'sha256', hash_hmac( 'sha256', $payload['iv'].$payload['value'], $this->key ), $bytes, true )
+				hash_hmac( 'sha256', hash_hmac( 'sha256', $payload->iv.$payload->value, $this->key ), $bytes, true )
 			)
 		)){
-			throw new Exception();
+			throw new \Exception();
 		}
 	}
 

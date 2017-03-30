@@ -19,15 +19,31 @@ abstract class AStorage
 	/**
 	 * Method setApp
 	 *
+	 * @final
+	 *
 	 * @access public
 	 *
 	 * @param  string $appName
 	 *
 	 * @return void
 	 */
-	public function setApp( string$appName )
+	final public function setApp( string$appName )
 	{
 		$this->app= $this->findApp( $appName );
+	}
+
+	/**
+	 * Method setApp
+	 *
+	 * @final
+	 *
+	 * @access public
+	 *
+	 * @return void
+	 */
+	final public function app()
+	{
+		return $this->app;
 	}
 
 	/**
@@ -35,13 +51,13 @@ abstract class AStorage
 	 *
 	 * @abstract
 	 *
-	 * @access public
+	 * @access protected
 	 *
 	 * @param  string $appName
 	 *
 	 * @return AApp
 	 */
-	abstract public function findApp( strnig$appName );
+	abstract protected function findApp( string$appName );
 
 	/**
 	 * List pictures from given directory.
@@ -77,11 +93,52 @@ abstract class AStorage
 	 * @access public
 	 *
 	 * @param  string $content
-	 * @param  string $path
+	 * @param  string $dir
 	 * @param  string $contentType
 	 *
 	 * @return IPicture
 	 */
-	abstract public function store( string$content, string$path='/', string$contentType=null ):IPicture;
+	abstract public function store( string$content, string$dir='/', string$contentType=null ):IPicture;
+
+	/**
+	 * Method delete
+	 *
+	 * @abstract
+	 *
+	 * @access public
+	 *
+	 * @param  string $path
+	 *
+	 * @return bool
+	 */
+	abstract public function delete( string$path ):bool;
+
+	/**
+	 * Method copy
+	 *
+	 * @abstract
+	 *
+	 * @access public
+	 *
+	 * @param  string $path
+	 * @param  string $dir
+	 *
+	 * @return bool
+	 */
+	abstract public function copy( string$path, string$dir ):bool;
+
+	/**
+	 * Method move
+	 *
+	 * @abstract
+	 *
+	 * @access public
+	 *
+	 * @param  string $path
+	 * @param  string $dir
+	 *
+	 * @return bool
+	 */
+	abstract public function move( string$path, string$dir ):bool;
 
 }

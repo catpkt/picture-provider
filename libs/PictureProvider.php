@@ -41,7 +41,7 @@ class PictureProvider
 	 */
 	public function handle( Request$request ):Response
 	{
-		$this->{$this->route( $request )}( $request );
+		return $this->{$this->route( $request )}( $request );
 	}
 
 	/**
@@ -55,7 +55,7 @@ class PictureProvider
 	 */
 	private function route( Request$request ):string
 	{
-		$path= trim( $request->path(), '/' );
+		$path= trim( $request->getPathInfo(), '/' );
 
 		$app=  strstr( $path, '/', true  )?:$path;
 		$path= strstr( $path, '/', false )?:'/';
@@ -70,7 +70,7 @@ class PictureProvider
 			'DELETE:/'=> 'delete',
 			'PUT:/'=> 'copy',
 			'PATCH:/'=> 'move',
-		][$request->method().':'.$path];
+		][$request->getMethod().':'.$path];
 	}
 
 	/**
@@ -84,13 +84,13 @@ class PictureProvider
 	 */
 	protected function upload( Request$request ):array
 	{
-		$content=     $this->storage->app->encryptor->decrypt( $request->getContent() );
+		$content=     $this->storage->app()->getEncryptor()->decrypt( $request->getContent() );
 		$contentType= $request->headers->get( 'Content-Type' );
 		$directory=   $request->get( 'dir' );
 
 		$picture= $this->storage->store( $content, $directory, $contentType );
 
-		return $picture->hash();
+		return $picture->getHash();
 	}
 
 	/**
@@ -104,7 +104,7 @@ class PictureProvider
 	 */
 	protected function previewList( Request$request ):array
 	{
-		#
+		return [];
 	}
 
 	/**
