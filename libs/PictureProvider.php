@@ -118,7 +118,12 @@ class PictureProvider
 	 */
 	protected function urls( Request$request ):array
 	{
-		$picture= $this->storage->get( $request->get( 'hash' ) );
+		if(!( $hash= $request->get( 'hash' ) ))
+		{
+			throw new Exceptions\BadRequest( 'Query parameter "hash" is required.' );
+		}
+
+		$picture= $this->storage->get( $hash );
 
 		return array_map( function( $size )use( $picture ){
 			return $picture->getUrlBySize( $size );
