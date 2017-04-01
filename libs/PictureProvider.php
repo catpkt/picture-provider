@@ -41,7 +41,17 @@ class PictureProvider
 	 */
 	public function handle( Request$request ):Response
 	{
-		return new JsonResponse( $this->{$this->route( $request )}( $request ) );
+		$path= trim( $request->getPathInfo(), '/' );
+
+		$app=  strstr( $path, '/', true  )?:$path;
+
+		$this->storage->setApp( $app );
+
+		return new Response(
+			$this->storage->app()->getEncryptor()->encrypt(
+				$this->{$this->route( $request )}( $request )
+			)
+		);
 	}
 
 	/**
@@ -57,10 +67,7 @@ class PictureProvider
 	{
 		$path= trim( $request->getPathInfo(), '/' );
 
-		$app=  strstr( $path, '/', true  )?:$path;
 		$path= strstr( $path, '/', false )?:'/';
-
-		$this->storage->setApp( $app );
 
 		return [
 			'POST:/'=> 'upload',
@@ -104,7 +111,12 @@ class PictureProvider
 	 */
 	protected function previewList( Request$request ):array
 	{
-		return [];
+		if(!( $dir= $request->get( 'dir' ) and $size= $request->get( 'size' ) ))
+		{
+			throw new Exceptions\BadRequest( 'Query parameter "dir" and "size" are required.' );
+		}
+
+		return $this->storage->list( $dir )->preview( ...$this->parseSize( $size ) );
 	}
 
 	/**
@@ -118,19 +130,17 @@ class PictureProvider
 	 */
 	protected function urls( Request$request ):array
 	{
-		if(!( $hash= $request->get( 'hash' ) ))
+		if(!( $hash= $request->get( 'hash' ) and $sizes= $request->get( 'sizes' ) ))
 		{
 			throw new Exceptions\BadRequest( 'Query parameter "hash" is required.' );
 		}
 
 		$picture= $this->storage->get( $hash );
 
-		return array_map( function( $size )use( $picture ){
+		return array_combine( $sizes, array_map( function( $size )use( $picture ){
 
-			list( $width, $height, )= $this->parseSize( $size );
-
-			return $picture->getUrlBySize( $size );
-		}, $request->get( 'sizes' ) );
+			return $picture->getUrlBySize( $this->parseSize( $size ) );
+		}, $sizes ) );
 	}
 
 	/**

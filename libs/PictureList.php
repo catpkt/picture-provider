@@ -4,7 +4,7 @@ namespace CatPKT\PictureProvider;
 
 ////////////////////////////////////////////////////////////////
 
-final class PictureList implements Iterator, ArrayAccess
+final class PictureList implements \Iterator, \ArrayAccess, \Countable
 {
 
 	/**
@@ -34,7 +34,7 @@ final class PictureList implements Iterator, ArrayAccess
 	 *
 	 * @return
 	 */
-	public function __construct( iterable$pictures )
+	public function __construct( $pictures )
 	{
 		foreach( $pictures as $picture )
 		{
@@ -63,7 +63,7 @@ final class PictureList implements Iterator, ArrayAccess
 	 *
 	 * @return ?IPicture
 	 */
-	public function pop()/*:?IPicture*/
+	public function pop()
 	{
 		return array_pop( $this->array );
 	}
@@ -82,7 +82,7 @@ final class PictureList implements Iterator, ArrayAccess
 	 *
 	 * @return bool
 	 */
-	public function offsetExists( int$offset ):bool
+	public function offsetExists( $offset ):bool
 	{
 		return array_key_exists( $offset, $this->array );
 	}
@@ -96,7 +96,7 @@ final class PictureList implements Iterator, ArrayAccess
 	 *
 	 * @return IPicture
 	 */
-	public function offsetGet( int$offset ):IPicture
+	public function offsetGet( $offset ):IPicture
 	{
 		return $this->array[$offset];
 	}
@@ -111,7 +111,7 @@ final class PictureList implements Iterator, ArrayAccess
 	 *
 	 * @return void
 	 */
-	public function offsetSet( int$offset, IPicture$picture )/*:void*/
+	public function offsetSet( $offset, $picture )
 	{
 		$count= count( $this->array );
 
@@ -142,7 +142,7 @@ final class PictureList implements Iterator, ArrayAccess
 	 *
 	 * @return void
 	 */
-	public function offsetUnset( int$offset )/*:void*/
+	public function offsetUnset( $offset )
 	{
 		throw new Exception( 'Cannot unset a Picture by offset. Pleace use pop or splice.' );
 	}
@@ -183,7 +183,7 @@ final class PictureList implements Iterator, ArrayAccess
 	 *
 	 * @return void
 	 */
-	public function next()/*:void*/
+	public function next()
 	{
 		++$this->key;
 	}
@@ -195,7 +195,7 @@ final class PictureList implements Iterator, ArrayAccess
 	 *
 	 * @return void
 	 */
-	public function rewind()/*:void*/
+	public function rewind()
 	{
 		$this->key= 0;
 	}
@@ -210,6 +210,34 @@ final class PictureList implements Iterator, ArrayAccess
 	public function valid():bool
 	{
 		return $this->offsetExists( $this->index );
+	}
+
+	/**
+	 * Method count
+	 *
+	 * @access public
+	 *
+	 * @return int
+	 */
+	public function count():int
+	{
+		return count( $this->array );
+	}
+
+	/**
+	 * Method toArray
+	 *
+	 * @access public
+	 *
+	 * @return array
+	 */
+	public function toArray():array
+	{
+		return array_map( function( IPicture$picture ){
+
+			return $picture->getHash();
+
+		}, $this->array );
 	}
 
 }
