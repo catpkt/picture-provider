@@ -71,7 +71,7 @@ class PictureProvider
 
 		return [
 			'POST:/'=> 'upload',
-			'GET:/'=> 'previewList',
+			'GET:/'=> 'list',
 			'GET:/urls'=> 'urls',
 			'GET:/content'=> 'content',
 			'DELETE:/'=> 'delete',
@@ -109,14 +109,14 @@ class PictureProvider
 	 *
 	 * @return array
 	 */
-	protected function previewList( Request$request ):array
+	protected function list( Request$request ):array
 	{
-		if(!( $dir= $request->get( 'dir' ) and $size= $request->get( 'size' ) ))
+		if(!( $dir= $request->get( 'dir' ) ))
 		{
-			throw new Exceptions\BadRequest( 'Query parameter "dir" and "size" are required.' );
+			throw new Exceptions\BadRequest( 'Query parameter "dir" is required.' );
 		}
 
-		return $this->storage->list( $dir )->preview( ...$this->parseSize( $size ) );
+		return $this->storage->list( $dir )->toArray();
 	}
 
 	/**
@@ -139,7 +139,8 @@ class PictureProvider
 
 		return array_combine( $sizes, array_map( function( $size )use( $picture ){
 
-			return $picture->getUrlBySize( $this->parseSize( $size ) );
+			return $picture->getUrlBySize( ...$this->parseSize( $size ) );
+
 		}, $sizes ) );
 	}
 

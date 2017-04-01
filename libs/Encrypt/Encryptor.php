@@ -53,7 +53,7 @@ class Encryptor
 	{
 		$iv= random_bytes(16);
 
-		$value= openssl_encrypt( serialize($data), $this->method, $this->key, 0, $iv );
+		$value= openssl_encrypt( serialize($data), $this->encryptMethod, $this->apiKey, 0, $iv );
 
 		if( $value===false )
 		{
@@ -62,7 +62,7 @@ class Encryptor
 
 		$iv= base64_encode($iv);
 
-		$mac= hash_hmac( 'sha256', $iv.$value, $this->key );
+		$mac= hash_hmac( 'sha256', $iv.$value, $this->apiKey );
 
 		return base64_encode(json_encode([ 'iv'=>$iv, 'value'=>$value, 'mac'=>$mac, ]));
 	}
@@ -85,16 +85,16 @@ class Encryptor
 
 			$iv= base64_decode( $payload->iv );
 
-			$decrypted= openssl_decrypt( $payload->value, $this->method, $this->key, 0, $iv );
+			$decrypted= openssl_decrypt( $payload->value, $this->encryptMethod, $this->apiKey, 0, $iv );
 
 			if( false===$decrypted )
 			{
-				throw new \Exception();
+				throw new \Exception('Decrypt failed.');
 			}
 
 			return unserialize( $decrypted );
 		}
-		catch( Throwable$e )
+		catch( \Exception$e )
 		{
 			throw new \Exception('Could not decrypt the data');
 		}
@@ -117,10 +117,10 @@ class Encryptor
 			hash_equals(
 				hash_hmac( 'sha256', $payload->mac, $bytes, true )
 				,
-				hash_hmac( 'sha256', hash_hmac( 'sha256', $payload->iv.$payload->value, $this->key ), $bytes, true )
+				hash_hmac( 'sha256', hash_hmac( 'sha256', $payload->iv.$payload->value, $this->apiKey ), $bytes, true )
 			)
 		)){
-			throw new \Exception();
+			throw new \Exception('aoeu');
 		}
 	}
 
