@@ -133,7 +133,12 @@ class PictureProvider
 	{
 		if(!( $hash= $request->get( 'hash' ) and $sizes= $request->get( 'sizes' ) ))
 		{
-			throw new Exceptions\BadRequest( 'Query parameter "hash" is required.' );
+			throw new Exceptions\BadRequest( 'Query parameter "hash" and "sizes" is required.' );
+		}
+
+		if(!( is_array( $sizes ) ))
+		{
+			throw new Exceptions\BadRequest( 'Query parameter "sizes" must be an array.' );
 		}
 
 		$picture= $this->storage->get( $hash );
