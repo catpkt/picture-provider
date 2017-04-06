@@ -72,6 +72,7 @@ class PictureProvider
 		return [
 			'POST:/'=> 'upload',
 			'GET:/'=> 'list',
+			'GET:/url'=> 'originUrl',
 			'GET:/urls'=> 'urls',
 			'GET:/content'=> 'content',
 			'DELETE:/'=> 'delete',
@@ -142,6 +143,27 @@ class PictureProvider
 			return $picture->getUrlBySize( ...$this->parseSize( $size ) );
 
 		}, $sizes ) );
+	}
+
+	/**
+	 * Get origin URL of a Picture.
+	 *
+	 * @access protected
+	 *
+	 * @param  Request $request
+	 *
+	 * @return string
+	 */
+	protected function originUrl( Request$request ):string
+	{
+		if(!( $hash= $request->get( 'hash' ) ))
+		{
+			throw new Exceptions\BadRequest( 'Query parameter "hash" is required.' );
+		}
+
+		$picture= $this->storage->get( $hash );
+
+		return $picture->getOriginUrl();
 	}
 
 	/**

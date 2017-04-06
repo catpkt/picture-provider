@@ -38,6 +38,17 @@ Get the Urls of a Picture
 				example
 					100x100:http://...
 
+Get the origin Url of a Picture
+	GET /{app}/url
+	param
+		hash
+			in query
+	response
+		200
+			url
+				in body
+				string
+
 Get the Content of a Picture
 	GET /{app}/content
 	param

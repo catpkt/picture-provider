@@ -8,6 +8,17 @@ interface IPicture
 {
 
 	/**
+	 * Method getOriginUrl
+	 *
+	 * @abstract
+	 *
+	 * @access public
+	 *
+	 * @return string
+	 */
+	function getOriginUrl():string;
+
+	/**
 	 * Method getUrlBySize
 	 *
 	 * @abstract
