@@ -33,8 +33,9 @@ Get the Urls of a Picture
 			array
 	response
 		200
-			json
+			urls
 				in body
+				array
 				example
 					100x100:http://...
 
@@ -70,9 +71,9 @@ Preview the Pictures in the directory
 			array
 	response
 		200
-			json
+			list
 				in body
-				binary
+				array
 
 Delete Picture
 	DELETE /{app}
